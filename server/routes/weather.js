@@ -2,77 +2,78 @@ const express = require('express');
 const axios = require('axios');
 const router = express.Router();
 
-// Goa coordinates: Panaji
-const GOA_LOCATION_ID = '2295420'; // Foreca location ID for Panaji, Goa
+const GOA_LAT = 15.4909;
+const GOA_LON = 73.8278;
 
 router.get('/', async (req, res) => {
   try {
-    const options = {
-      method: 'GET',
-      url: `https://foreca-weather.p.rapidapi.com/current/${GOA_LOCATION_ID}`,
-      params: { alt: '0', tempunit: 'C', windunit: 'kmh', tz: 'Asia/Kolkata', lang: 'en' },
-      headers: {
-        'x-rapidapi-host': 'foreca-weather.p.rapidapi.com',
-        'x-rapidapi-key': process.env.RAPIDAPI_KEY
+    const apiKey = process.env.OPENWEATHER_API_KEY;
+    if (!apiKey) {
+      throw new Error('OpenWeather API Key missing');
+    }
+
+    // Get 5-day forecast (3-hour intervals)
+    const response = await axios.get(`https://api.openweathermap.org/data/2.5/forecast`, {
+      params: {
+        lat: GOA_LAT,
+        lon: GOA_LON,
+        appid: apiKey,
+        units: 'metric'
       }
-    };
+    });
 
-    const response = await axios.request(options);
-    const weather = response.data.current;
+    const list = response.data.list;
+    
+    // Group by day and pick one entry per day (e.g., mid-day)
+    const dailyData = {};
+    list.forEach(item => {
+      const date = item.dt_txt.split(' ')[0];
+      if (!dailyData[date]) {
+        dailyData[date] = item;
+      } else {
+        // If we have a slot closer to 12:00, pick that
+        const currentHour = parseInt(item.dt_txt.split(' ')[1].split(':')[0]);
+        if (Math.abs(currentHour - 12) < Math.abs(parseInt(dailyData[date].dt_txt.split(' ')[1].split(':')[0]) - 12)) {
+          dailyData[date] = item;
+        }
+      }
+    });
 
-    // Normalize the data
-    const weatherData = {
-      location: 'Goa, India',
-      temperature: weather.temperature,
-      feelsLike: weather.feelsLikeTemp,
-      symbol: weather.symbol,
-      symbolPhrase: weather.symbolPhrase,
-      windSpeed: weather.windSpeed,
-      windDir: weather.windDirString,
-      humidity: weather.relHumidity,
-      visibility: weather.visibility,
-      updated: weather.time,
-      advice: getTravelAdvice(weather)
-    };
+    const forecast = Object.values(dailyData).map(day => ({
+      date: day.dt_txt.split(' ')[0],
+      temp: Math.round(day.main.temp),
+      condition: day.weather[0].main,
+      description: day.weather[0].description,
+      icon: day.weather[0].icon,
+      humidity: day.main.humidity,
+      windSpeed: day.wind.speed,
+      // Bad weather flag for warnings
+      isBad: ['Rain', 'Thunderstorm', 'Snow', 'Extreme'].includes(day.weather[0].main)
+    }));
 
-    res.json({ success: true, weather: weatherData });
-  } catch (err) {
-    console.error('Weather API error:', err.message);
-    // Return fallback data so app still works
     res.json({
       success: true,
-      weather: {
-        location: 'Goa, India',
-        temperature: 32,
-        feelsLike: 35,
-        symbol: 'd000',
-        symbolPhrase: 'Clear sky',
-        windSpeed: 15,
-        windDir: 'SW',
-        humidity: 70,
-        visibility: 10,
-        updated: new Date().toISOString(),
-        advice: 'Great beach weather! Don\'t forget sunscreen.',
-        isFallback: true
-      }
+      city: 'Goa',
+      current: forecast[0],
+      forecast: forecast.slice(0, 5) // Return up to 5 days
+    });
+
+  } catch (error) {
+    console.error('Weather Proxy Error:', error.message);
+    
+    // Fallback data for demo
+    res.json({
+      success: false,
+      city: 'Goa (Demo)',
+      current: { temp: 32, condition: 'Clear', description: 'clear sky', icon: '01d', isBad: false },
+      forecast: [
+        { date: '2026-04-21', temp: 32, condition: 'Clear', isBad: false },
+        { date: '2026-04-22', temp: 31, condition: 'Clouds', isBad: false },
+        { date: '2026-04-23', temp: 29, condition: 'Rain', isBad: true },
+      ],
+      error: error.message
     });
   }
 });
-
-function getTravelAdvice(weather) {
-  const temp = weather.temperature;
-  const phrase = (weather.symbolPhrase || '').toLowerCase();
-
-  if (phrase.includes('rain') || phrase.includes('storm')) {
-    return '🌧️ Rain expected — pack a light raincoat. Perfect for fort visits and indoor shacks!';
-  } else if (temp > 35) {
-    return '☀️ Very hot today — visit beaches early morning or evening. Stay hydrated!';
-  } else if (temp >= 28 && temp <= 35) {
-    return '🌴 Ideal Goa weather! Perfect for beaches, water sports, and sightseeing.';
-  } else if (temp < 25) {
-    return '🌬️ Cool and pleasant — great for heritage walks and outdoor activities.';
-  }
-  return '🌅 Good weather for exploring Goa! Enjoy the beaches and culture.';
-}
 
 module.exports = router;

@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../AuthContext';
 import './Navbar.css';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -20,6 +23,10 @@ export default function Navbar() {
     { to: '/planner', label: '✨ Plan My Trip' },
     { to: '/spots', label: 'Explore Spots' },
   ];
+
+  if (user) {
+    navLinks.push({ to: '/trips', label: 'My Trips' });
+  }
 
   return (
     <nav className={`navbar ${scrolled ? 'navbar--scrolled' : ''}`} role="navigation" aria-label="Main navigation">
@@ -47,10 +54,22 @@ export default function Navbar() {
           ))}
         </ul>
 
-        {/* CTA */}
-        <Link to="/planner" className="navbar__cta btn btn-primary" id="nav-cta">
-          Plan My Trip
-        </Link>
+        {/* Auth & CTA */}
+        <div className="navbar__actions">
+          {user ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <span className="user-name-nav" style={{ fontSize: '0.9rem', fontWeight: '700', color: 'var(--text-secondary)' }}>
+                Hi, {user.displayName?.split(' ')[0] || 'Traveler'}
+              </span>
+              <button className="btn btn-ghost" onClick={logout} id="nav-logout">Logout</button>
+            </div>
+          ) : (
+            <Link to="/login" className="btn btn-ghost" id="nav-login">Login</Link>
+          )}
+          <Link to="/planner" className="navbar__cta btn btn-primary" id="nav-cta">
+            Plan My Trip
+          </Link>
+        </div>
 
         {/* Hamburger */}
         <button
@@ -74,6 +93,11 @@ export default function Navbar() {
             {link.label}
           </Link>
         ))}
+        {user ? (
+          <button className="navbar__mobile-link" onClick={logout} style={{ textAlign: 'left', background: 'none', border: 'none' }}>Logout</button>
+        ) : (
+          <Link to="/login" className={`navbar__mobile-link ${location.pathname === '/login' ? 'active' : ''}`}>Login</Link>
+        )}
       </div>
     </nav>
   );

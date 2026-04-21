@@ -161,11 +161,18 @@ const spots = [
 
 // GET /api/spots — all spots
 router.get('/', (req, res) => {
-  const { category, area } = req.query;
+  const { category, area, name } = req.query;
   let filtered = spots;
 
   if (category) filtered = filtered.filter(s => s.category === category);
   if (area) filtered = filtered.filter(s => s.area.toLowerCase().includes(area.toLowerCase()));
+  if (name) {
+    const search = name.toLowerCase();
+    filtered = filtered.filter(s => 
+      s.name.toLowerCase().includes(search) || 
+      search.includes(s.name.toLowerCase())
+    );
+  }
 
   res.json({ success: true, spots: filtered, total: filtered.length });
 });

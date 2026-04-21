@@ -1,17 +1,19 @@
-require('dotenv').config();
+require('dotenv').config({ path: '../.env' });
 const express = require('express');
 const cors = require('cors');
 
 const itineraryRoute = require('./routes/itinerary');
 const weatherRoute = require('./routes/weather');
 const spotsRoute = require('./routes/spots');
+const chatRoute = require('./routes/chat');
+const analyticsRoute = require('./routes/analytics');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:3000'],
+  origin: ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:3000'],
   methods: ['GET', 'POST'],
   credentials: true
 }));
@@ -21,6 +23,8 @@ app.use(express.json());
 app.use('/api/itinerary', itineraryRoute);
 app.use('/api/weather', weatherRoute);
 app.use('/api/spots', spotsRoute);
+app.use('/api/chat', chatRoute);
+app.use('/api/analytics', analyticsRoute);
 
 // Health check
 app.get('/api/health', (req, res) => {

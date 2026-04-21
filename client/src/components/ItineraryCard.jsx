@@ -22,7 +22,7 @@ function StarRating({ rating }) {
   );
 }
 
-export default function ItineraryCard({ day }) {
+export default function ItineraryCard({ day, onSpotClick }) {
   const [expanded, setExpanded] = useState(null);
 
   if (!day) return null;
@@ -70,7 +70,15 @@ export default function ItineraryCard({ day }) {
                 <div className="activity-header">
                   <div className="activity-time">{activity.time}</div>
                   <div className="activity-info">
-                    <h3 className="activity-place">{activity.place}</h3>
+                    <h3 
+                      className="activity-place clickable" 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onSpotClick?.(activity.place);
+                      }}
+                    >
+                      {activity.place}
+                    </h3>
                     <div className="activity-meta-row">
                       <span className={`badge badge-${activity.category}`}>{activity.category}</span>
                       <span className="activity-duration">⏱ {activity.duration}</span>
@@ -83,6 +91,16 @@ export default function ItineraryCard({ day }) {
                 {isOpen && (
                   <div className="activity-body animate-fade">
                     <p className="activity-desc">{activity.description}</p>
+                    <button 
+                      className="btn btn-secondary btn-sm" 
+                      style={{ marginTop: '1rem', width: 'auto' }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onSpotClick?.(activity.place);
+                      }}
+                    >
+                      📍 Show on Map
+                    </button>
                   </div>
                 )}
               </div>
@@ -97,11 +115,16 @@ export default function ItineraryCard({ day }) {
           <h3 className="meals-title">🍽️ Today's Meals</h3>
           <div className="meals-grid">
             {Object.entries(day.meals).map(([mealType, meal]) => (
-              <div key={mealType} className="meal-card">
+              <div 
+                key={mealType} 
+                className="meal-card clickable"
+                onClick={() => onSpotClick?.(meal.place)}
+              >
                 <div className="meal-type">{mealType.charAt(0).toUpperCase() + mealType.slice(1)}</div>
                 <div className="meal-place">{meal.place}</div>
                 <div className="meal-dish">{meal.dish}</div>
                 <div className="meal-cost">{meal.cost}</div>
+                <div className="meal-map-hint">📍 Click for Map</div>
               </div>
             ))}
           </div>

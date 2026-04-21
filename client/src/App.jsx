@@ -1,21 +1,30 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './AuthContext';
 import Navbar from './components/Navbar';
 import HomePage from './pages/HomePage';
 import PlannerPage from './pages/PlannerPage';
 import SpotsPage from './pages/SpotsPage';
+import AuthPage from './pages/AuthPage';
+import TripsPage from './pages/TripsPage';
+import Chatbot from './components/Chatbot';
 import './index.css';
 import './App.css';
 
 function App() {
   return (
-    <BrowserRouter>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/planner" element={<PlannerPage />} />
-        <Route path="/spots" element={<SpotsPage />} />
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/planner" element={<PlannerPage />} />
+          <Route path="/spots" element={<SpotsPage />} />
+          <Route path="/login" element={<AuthPage />} />
+          <Route path="/trips" element={<TripsPage />} />
+        </Routes>
+        <Chatbot />
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

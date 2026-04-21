@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import WeatherWidget from '../components/WeatherWidget';
 import SpotCard from '../components/SpotCard';
@@ -6,261 +6,148 @@ import './HomePage.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
-const features = [
-  { icon: '🤖', title: 'AI Itinerary', desc: 'Personalized day-wise travel plans powered by Groq Llama 3.3' },
-  { icon: '💰', title: 'Budget Planner', desc: 'Smart budget breakdown across stays, food, transport & activities' },
-  { icon: '⛅', title: 'Live Weather', desc: 'Real-time Goa weather with travel advice tailored to conditions' },
-  { icon: '📍', title: 'Curated Spots', desc: '18+ handpicked beaches, forts, clubs, and hidden gems' },
-  { icon: '🚗', title: 'Transport Tips', desc: 'Bike rentals, ferry routes, and local commute guidance' },
-  { icon: '🌅', title: 'Goa Expertise', desc: 'Insider tips from seasoned Goa travelers and locals' },
-];
-
-const stats = [
-  { value: '50+', label: 'Tourist Spots' },
-  { value: '10K+', label: 'Trips Planned' },
-  { value: '4.9★', label: 'User Rating' },
-  { value: '100%', label: 'AI-Powered' },
-];
-
-const testimonials = [
-  { name: 'Priya K.', text: 'GoaGenie planned my entire 5-day Goa trip in seconds! The itinerary was perfect — beaches, forts, and the best local restaurants.', avatar: '🧑‍🦱' },
-  { name: 'Rohan M.', text: 'The budget estimation was spot-on. We stayed within ₹25,000 for the whole trip! This app is a game-changer.', avatar: '🧔' },
-  { name: 'Sneha D.', text: 'Weather tips were super helpful — we avoided the rainy days and had the most amazing sunsets at Chapora Fort!', avatar: '👩' },
-];
-
 export default function HomePage() {
   const [featuredSpots, setFeaturedSpots] = useState([]);
-  const [typedText, setTypedText] = useState('');
-  const heroRef = useRef(null);
-  const fullText = 'Your Smart Goa Travel Companion';
+  const [visitorCount, setVisitorCount] = useState(0);
 
-  // Typewriter effect
-  useEffect(() => {
-    let i = 0;
-    const interval = setInterval(() => {
-      setTypedText(fullText.slice(0, i + 1));
-      i++;
-      if (i >= fullText.length) clearInterval(interval);
-    }, 60);
-    return () => clearInterval(interval);
-  }, []);
-
-  // Load featured spots
   useEffect(() => {
     fetch(`${API_URL}/api/spots`)
       .then(r => r.json())
       .then(data => {
         if (data.success) {
-          // Pick 3 diverse spots
-          const picks = data.spots.filter(s =>
-            [1, 12, 7].includes(s.id)
-          );
-          setFeaturedSpots(picks);
+          setFeaturedSpots(data.spots.slice(0, 3));
         }
-      })
-      .catch(() => {});
-  }, []);
+      });
 
-  // Parallax on hero
-  useEffect(() => {
-    const handleScroll = () => {
-      if (heroRef.current) {
-        heroRef.current.style.setProperty('--scroll', `${window.scrollY * 0.4}px`);
-      }
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    fetch(`${API_URL}/api/analytics/visitors`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.success) setVisitorCount(data.count);
+      });
   }, []);
 
   return (
-    <div className="page-content">
-      {/* ── HERO ─────────────────────────────────────── */}
-      <section className="hero" ref={heroRef} id="hero">
-        {/* Animated blobs */}
-        <div className="hero__blob hero__blob--1" aria-hidden="true" />
-        <div className="hero__blob hero__blob--2" aria-hidden="true" />
-        <div className="hero__blob hero__blob--3" aria-hidden="true" />
-
-        {/* Particles */}
-        {Array.from({ length: 20 }).map((_, i) => (
-          <div key={i} className="hero__particle" style={{
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
-            animationDelay: `${Math.random() * 5}s`,
-            animationDuration: `${3 + Math.random() * 4}s`,
-          }} aria-hidden="true" />
-        ))}
-
-        <div className="hero__content container">
-          <div className="hero__badge animate-fade-up">
-            <span>🌴</span> Goa's #1 AI Travel Planner
+    <div className="home-page">
+      {/* ─── HERO SECTION ──────────────────────────── */}
+      <section className="hero">
+        <div className="hero__water-bg">
+          <img src="/goa_ocean_minimalist_1776750130676.png" alt="Water Background" />
+          <div className="hero__overlay"></div>
+          {/* Waves Animation */}
+          <div className="waves-container">
+            <svg className="waves" xmlns="http://www.w3.org/2000/svg" viewBox="0 24 150 28" preserveAspectRatio="none" shapeRendering="auto">
+              <defs>
+                <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+              </defs>
+              <g className="parallax">
+                <use xlinkHref="#gentle-wave" x="48" y="0" fill="rgba(14, 165, 233, 0.4)" />
+                <use xlinkHref="#gentle-wave" x="48" y="3" fill="rgba(14, 165, 233, 0.2)" />
+                <use xlinkHref="#gentle-wave" x="48" y="5" fill="rgba(14, 165, 233, 0.1)" />
+                <use xlinkHref="#gentle-wave" x="48" y="7" fill="var(--bg-primary)" />
+              </g>
+            </svg>
           </div>
-          <h1 className="hero__title animate-fade-up">
-            Plan Your
-            <span className="hero__title-gradient"> Dream Goa</span>
-            <br />Trip in Seconds
-          </h1>
-          <p className="hero__subtitle animate-fade-up">
-            <span className="hero__typewriter">{typedText}</span>
-            <span className="hero__cursor">|</span>
-          </p>
-          <p className="hero__desc animate-fade-up">
-            Enter your budget, days, and interests — GoaGenie's AI generates a complete
-            personalized itinerary with weather insights, curated spots, and budget breakdown.
-          </p>
-          <div className="hero__actions animate-fade-up">
-            <Link to="/planner" className="btn btn-primary hero__cta" id="hero-plan-btn">
-              ✨ Start Planning Free
-            </Link>
-            <Link to="/spots" className="btn btn-secondary" id="hero-spots-btn">
-              Explore Spots
-            </Link>
-          </div>
-
-          {/* Stats strip */}
-          <div className="hero__stats animate-fade-up">
-            {stats.map(s => (
-              <div key={s.label} className="hero__stat">
-                <span className="hero__stat-value">{s.value}</span>
-                <span className="hero__stat-label">{s.label}</span>
+        </div>
+        
+        <div className="container hero__container">
+          <div className="hero__content animate-fade-up">
+            <div className="hero__badge">Goa's #1 AI Planner</div>
+            <h1 className="hero__title">
+              Plan your dream <br/>
+              <span className="hero__highlight">Goa vacation</span>
+            </h1>
+            <p className="hero__desc">
+              Your smart travel companion. AI-powered itineraries, real-time weather, 
+              and handpicked local gems.
+            </p>
+            <div className="hero__actions">
+              <Link to="/planner" className="btn btn-primary">Start Planning — Free</Link>
+              <Link to="/spots" className="btn btn-ghost">Explore Spots</Link>
+            </div>
+            <div className="hero__stats">
+              <div className="stat">
+                <span className="stat__val">{visitorCount}+</span>
+                <span className="stat__label">Travelers</span>
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Weather Widget floating in hero */}
-        <div className="hero__weather animate-float">
-          <WeatherWidget compact />
-        </div>
-
-        {/* Wave */}
-        <div className="hero__wave" aria-hidden="true">
-          <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
-            <path d="M0,60 C150,120 350,0 600,60 C850,120 1050,0 1200,60 L1200,120 L0,120 Z" fill="var(--ocean-deep)" />
-          </svg>
-        </div>
-      </section>
-
-      {/* ── HOW IT WORKS ─────────────────────────────── */}
-      <section className="section how-it-works" id="how-it-works">
-        <div className="container">
-          <div className="section-header">
-            <h2 className="section-title">How GoaGenie Works</h2>
-            <p className="section-subtitle">Three simple steps to your perfect Goa vacation</p>
-          </div>
-          <div className="steps">
-            {[
-              { step: '01', icon: '📝', title: 'Tell Us Your Plans', desc: 'Enter your budget, trip duration, travel group, and interests.' },
-              { step: '02', icon: '🤖', title: 'AI Does the Magic', desc: 'Groq AI generates your personalized day-by-day itinerary instantly.' },
-              { step: '03', icon: '🌴', title: 'Explore & Enjoy', desc: 'Download your plan, check weather, and head to Goa!' },
-            ].map((item, i) => (
-              <div key={i} className="step-card glass-card">
-                <div className="step-number">{item.step}</div>
-                <div className="step-icon">{item.icon}</div>
-                <h3 className="step-title">{item.title}</h3>
-                <p className="step-desc">{item.desc}</p>
-                {i < 2 && <div className="step-arrow">→</div>}
+              <div className="stat">
+                <span className="stat__val">50+</span>
+                <span className="stat__label">Spots</span>
               </div>
-            ))}
+            </div>
+          </div>
+
+          <div className="hero__visual animate-fade">
+             <WeatherWidget />
           </div>
         </div>
       </section>
 
-      {/* ── FEATURES ────────────────────────────────── */}
-      <section className="section features" id="features">
+      {/* ─── FEATURES ──────────────────────────────── */}
+      <section className="section features-section">
         <div className="container">
-          <div className="section-header">
-            <h2 className="section-title">Everything You Need</h2>
-            <p className="section-subtitle">Packed with features to make your Goa trip unforgettable</p>
-          </div>
-          <div className="features-grid">
-            {features.map((f, i) => (
-              <div key={i} className="feature-card glass-card" style={{ animationDelay: `${i * 0.1}s` }}>
-                <div className="feature-icon">{f.icon}</div>
-                <h3 className="feature-title">{f.title}</h3>
-                <p className="feature-desc">{f.desc}</p>
-              </div>
-            ))}
+          <header className="section-header">
+            <h2 className="section-title">Everything you need</h2>
+            <p className="section-subtitle">Simplified travel planning for the modern explorer.</p>
+          </header>
+
+          <div className="grid-3 features-grid">
+            <div className="feature-card card">
+              <div className="feature-icon">🤖</div>
+              <h3>AI Itineraries</h3>
+              <p>Personalized day-wise plans based on your interests and budget.</p>
+            </div>
+            <div className="feature-card card">
+              <div className="feature-icon">🌦️</div>
+              <h3>Smart Weather</h3>
+              <p>Real-time forecasts and travel warnings for your trip duration.</p>
+            </div>
+            <div className="feature-card card">
+              <div className="feature-icon">📍</div>
+              <h3>Smart Routes</h3>
+              <p>Get directions from your location to any spot in your itinerary.</p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ── FEATURED SPOTS ───────────────────────────── */}
-      {featuredSpots.length > 0 && (
-        <section className="section featured-spots" id="featured-spots">
-          <div className="container">
-            <div className="section-header">
-              <h2 className="section-title">Goa's Must-Visit Spots</h2>
-              <p className="section-subtitle">Handpicked highlights from beaches to forts</p>
-            </div>
-            <div className="spots-row">
-              {featuredSpots.map(spot => (
-                <SpotCard key={spot.id} spot={spot} />
-              ))}
-            </div>
-            <div className="section-cta">
-              <Link to="/spots" className="btn btn-secondary" id="see-all-spots-btn">
-                See All 18+ Spots →
-              </Link>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ── TESTIMONIALS ────────────────────────────── */}
-      <section className="section testimonials" id="testimonials">
+      {/* ─── FEATURED SPOTS ────────────────────────── */}
+      <section className="section spots-section bg-accent">
         <div className="container">
-          <div className="section-header">
-            <h2 className="section-title">Loved by Travelers</h2>
-            <p className="section-subtitle">Real experiences from real Goa adventurers</p>
-          </div>
-          <div className="testimonials-grid">
-            {testimonials.map((t, i) => (
-              <div key={i} className="testimonial-card glass-card">
-                <div className="testimonial-stars">{'⭐'.repeat(5)}</div>
-                <p className="testimonial-text">"{t.text}"</p>
-                <div className="testimonial-author">
-                  <span className="testimonial-avatar">{t.avatar}</span>
-                  <strong>{t.name}</strong>
-                </div>
-              </div>
+          <header className="section-header">
+            <h2 className="section-title">Popular Destinations</h2>
+            <p className="section-subtitle">Explore the most loved beaches and landmarks.</p>
+          </header>
+
+          <div className="grid-3">
+            {featuredSpots.map(spot => (
+              <SpotCard key={spot.id} spot={spot} />
             ))}
+          </div>
+          
+          <div className="flex-center" style={{ marginTop: '3rem' }}>
+            <Link to="/spots" className="btn btn-secondary">View All Spots →</Link>
           </div>
         </div>
       </section>
 
-      {/* ── CTA BANNER ──────────────────────────────── */}
-      <section className="cta-banner" id="cta-banner">
+      {/* ─── CTA ───────────────────────────────────── */}
+      <section className="section cta-section">
         <div className="container">
-          <div className="cta-banner__inner glass-card">
-            <div className="cta-banner__content">
-              <h2 className="cta-banner__title">Ready for Your Goa Adventure? 🌊</h2>
-              <p className="cta-banner__subtitle">Join thousands of travelers who planned their perfect Goa trip with GoaGenie</p>
-            </div>
-            <Link to="/planner" className="btn btn-primary" id="cta-banner-btn">
-              ✨ Plan My Trip Now
+          <div className="cta-card card flex-center" style={{ flexDirection: 'column', textAlign: 'center', padding: '4rem 2rem' }}>
+            <h2 className="section-title">Ready for your Goa adventure?</h2>
+            <p className="section-subtitle" style={{ marginBottom: '2rem' }}>
+              Join thousands of travelers using GoaGenie to plan better.
+            </p>
+            <Link to="/planner" className="btn btn-primary btn-lg" style={{ padding: '1rem 3rem' }}>
+              Plan My Trip Now
             </Link>
           </div>
         </div>
       </section>
 
-      {/* ── FOOTER ──────────────────────────────────── */}
       <footer className="footer">
         <div className="container">
-          <div className="footer__inner">
-            <div className="footer__brand">
-              <span className="footer__logo">🌴 GoaGenie</span>
-              <p>Your Smart Goa Travel Companion</p>
-            </div>
-            <div className="footer__links">
-              <Link to="/" id="footer-home">Home</Link>
-              <Link to="/planner" id="footer-planner">Plan Trip</Link>
-              <Link to="/spots" id="footer-spots">Explore Spots</Link>
-            </div>
-          </div>
-          <div className="footer__bottom">
-            <p>© 2026 GoaGenie. Made with ❤️ for the beaches of Goa.</p>
-          </div>
+          <p>© 2026 GoaGenie. Your smart travel guide.</p>
         </div>
       </footer>
     </div>

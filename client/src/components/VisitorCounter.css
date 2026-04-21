@@ -1,0 +1,22 @@
+.visitor-counter {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--glass-bg);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--glass-border);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.visitor-icon {
+  font-size: 1rem;
+}
+
+.visitor-count {
+  color: var(--teal-light);
+  font-weight: 800;
+}

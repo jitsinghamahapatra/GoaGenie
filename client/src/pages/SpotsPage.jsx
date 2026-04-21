@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import SpotCard from '../components/SpotCard';
+import MapContainer from '../components/MapContainer';
 import './SpotsPage.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
@@ -20,6 +21,7 @@ export default function SpotsPage() {
   const [category, setCategory] = useState('all');
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
+  const [routingTarget, setRoutingTarget] = useState(null);
 
   useEffect(() => {
     fetch(`${API_URL}/api/spots`)
@@ -27,6 +29,13 @@ export default function SpotsPage() {
       .then(data => { if (data.success) { setSpots(data.spots); setFiltered(data.spots); } })
       .catch(() => {})
       .finally(() => setLoading(false));
+
+    const handleFocus = (e) => {
+      setRoutingTarget(e.detail);
+      document.querySelector('.map-section')?.scrollIntoView({ behavior: 'smooth' });
+    };
+    window.addEventListener('focusSpot', handleFocus);
+    return () => window.removeEventListener('focusSpot', handleFocus);
   }, []);
 
   useEffect(() => {
@@ -79,6 +88,11 @@ export default function SpotsPage() {
               {cat.icon} {cat.label}
             </button>
           ))}
+        </div>
+
+        {/* Map Section */}
+        <div className="map-section animate-fade-up">
+          <MapContainer spots={filtered} routingTarget={routingTarget} />
         </div>
 
         {/* Results count */}

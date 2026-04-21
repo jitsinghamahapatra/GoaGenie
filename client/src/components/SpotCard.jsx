@@ -66,6 +66,14 @@ export default function SpotCard({ spot }) {
             <span className="spot-meta-item">🎫 {spot.entryFee}</span>
             <span className="spot-meta-item">📅 {spot.bestTime}</span>
           </div>
+          <button 
+            className="btn btn-sm btn-secondary spot-map-btn"
+            onClick={() => {
+              window.dispatchEvent(new CustomEvent('focusSpot', { detail: spot }));
+            }}
+          >
+            Track Location 🗺️
+          </button>
         </div>
       </div>
     </article>
