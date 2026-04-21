@@ -1,0 +1,279 @@
+.itinerary-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* ─── HEADER ─────────────────────────────────── */
+.itinerary-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem;
+  gap: 1rem;
+}
+
+.itinerary-header__left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.day-badge {
+  background: var(--gradient-sunset);
+  color: white;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  font-size: 0.8rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+
+.day-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.2rem;
+}
+
+.day-theme {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.day-meta {
+  text-align: right;
+}
+
+.day-budget-display {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.day-budget-label {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.day-budget-value {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--sunset-amber);
+}
+
+/* ─── TIMELINE ───────────────────────────────── */
+.activities-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  position: relative;
+  padding-left: 2.5rem;
+}
+
+.activities-timeline::before {
+  content: '';
+  position: absolute;
+  left: 20px;
+  top: 20px;
+  bottom: 20px;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--teal), var(--sunset-orange));
+  opacity: 0.3;
+}
+
+.activity-item {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.timeline-dot {
+  position: absolute;
+  left: -2rem;
+  top: 1.1rem;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--cat-bg, var(--teal-glow));
+  border: 2px solid var(--cat-color, var(--teal));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  z-index: 1;
+  transition: all 0.2s;
+}
+
+.activity-item:hover .timeline-dot {
+  transform: scale(1.1);
+  box-shadow: 0 0 12px var(--cat-color, var(--teal));
+}
+
+.timeline-dot__inner { line-height: 1; }
+
+.activity-card {
+  cursor: pointer;
+  transition: all 0.2s;
+  overflow: hidden;
+}
+
+.activity-card:hover {
+  border-color: var(--cat-color, var(--teal));
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.activity-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+}
+
+.activity-time {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--cat-color, var(--teal));
+  white-space: nowrap;
+  padding-top: 3px;
+  min-width: 65px;
+}
+
+.activity-info { flex: 1; }
+
+.activity-place {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.35rem;
+}
+
+.activity-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.activity-duration,
+.activity-cost {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.activity-chevron {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  transition: transform 0.2s;
+}
+
+.activity-item.open .activity-chevron { color: var(--teal); }
+
+.activity-body {
+  padding: 0 1.25rem 1rem;
+  border-top: 1px solid var(--glass-border);
+}
+
+.activity-desc {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  padding-top: 0.75rem;
+}
+
+/* ─── MEALS ──────────────────────────────────── */
+.meals-section {
+  padding: 1.25rem;
+}
+
+.meals-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--sunset-gold);
+}
+
+.meals-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.meal-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.meal-type {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--teal-light);
+  margin-bottom: 2px;
+}
+
+.meal-place {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.meal-dish {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+.meal-cost {
+  font-size: 0.75rem;
+  color: var(--sunset-amber);
+  font-weight: 600;
+  margin-top: 3px;
+}
+
+/* ─── FOOTER ─────────────────────────────────── */
+.day-footer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.transport-card, .tip-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem;
+}
+
+.transport-icon, .tip-icon { font-size: 1.5rem; flex-shrink: 0; }
+
+.transport-label, .tip-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--teal-light);
+  margin-bottom: 3px;
+}
+
+.transport-text, .tip-text {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+@media (max-width: 640px) {
+  .meals-grid { grid-template-columns: 1fr; }
+  .day-footer { grid-template-columns: 1fr; }
+  .itinerary-header { flex-direction: column; align-items: flex-start; }
+  .day-meta { text-align: left; }
+}

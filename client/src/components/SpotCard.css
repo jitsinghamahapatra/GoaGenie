@@ -1,0 +1,120 @@
+.spot-card {
+  overflow: hidden;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.spot-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.4);
+  border-color: var(--cat-color, var(--teal));
+}
+
+/* Category Banner */
+.spot-card__banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem 0.75rem;
+  border-bottom: 1px solid var(--glass-border);
+  background: linear-gradient(135deg, rgba(255,255,255,0.04), transparent);
+}
+
+.spot-banner__emoji {
+  font-size: 2rem;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
+}
+
+.spot-banner__right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.spot-area {
+  font-size: 0.7rem;
+  font-weight: 700;
+  font-family: 'Outfit', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Body */
+.spot-card__body {
+  padding: 1rem 1.25rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.spot-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* Stars */
+.spot-stars {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.star { color: var(--sunset-gold); font-size: 0.8rem; }
+.star.empty { color: rgba(255,209,102,0.2); }
+.star.half { color: var(--sunset-amber); }
+
+.spot-rating-num {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--sunset-gold);
+  margin-left: 4px;
+}
+
+.spot-desc {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Highlights */
+.spot-highlights {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.25rem;
+}
+
+.highlight-tag {
+  background: var(--sand-muted);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-full);
+  padding: 0.2rem 0.6rem;
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+}
+
+/* Footer */
+.spot-card__footer {
+  margin-top: auto;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--glass-border);
+}
+
+.spot-meta {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.spot-meta-item {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}

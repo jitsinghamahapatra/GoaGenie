@@ -1,0 +1,12 @@
+/* App-level styles */
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Page wrapper */
+.page-content {
+  flex: 1;
+  padding-top: 70px; /* navbar height */
+}
