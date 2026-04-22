@@ -15,6 +15,8 @@ router.post('/', async (req, res) => {
   
   if (sourceLang === 'hi') {
     prompt = `Translate the following Hindi text into English and Konkani. Return ONLY a valid JSON object with the keys "english" and "konkani". Do not include any explanations or markdown formatting outside the JSON.\n\nText: "${text}"`;
+  } else if (sourceLang === 'kok') {
+    prompt = `Translate the following Konkani text into English and Hindi. Return ONLY a valid JSON object with the keys "english" and "hindi". Do not include any explanations or markdown formatting outside the JSON.\n\nText: "${text}"`;
   } else {
     // Default to English as source
     prompt = `Translate the following English text into Hindi and Konkani. Return ONLY a valid JSON object with the keys "hindi" and "konkani". Do not include any explanations or markdown formatting outside the JSON.\n\nText: "${text}"`;

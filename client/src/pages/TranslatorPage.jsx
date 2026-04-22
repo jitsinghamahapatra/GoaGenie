@@ -28,8 +28,7 @@ export default function TranslatorPage() {
 
       recognitionRef.current.onresult = (event) => {
         const transcript = event.results[0][0].transcript;
-        setOriginalText(transcript);
-        handleTranslate(transcript, sourceLang);
+        setOriginalText(prev => (prev ? prev + ' ' + transcript : transcript));
       };
 
       recognitionRef.current.onerror = (event) => {
@@ -44,6 +43,7 @@ export default function TranslatorPage() {
         setIsListening(false);
       };
     } else {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setError('Speech Recognition is not supported in this browser. Try Chrome or Edge.');
     }
   }, [sourceLang]);
@@ -51,10 +51,13 @@ export default function TranslatorPage() {
   // Update language when it changes
   useEffect(() => {
     if (recognitionRef.current) {
-      recognitionRef.current.lang = sourceLang === 'en' ? 'en-IN' : 'hi-IN';
+      // Fallback to hi-IN for Konkani speech recognition, or en-IN for English
+      recognitionRef.current.lang = sourceLang === 'en' ? 'en-IN' : sourceLang === 'hi' ? 'hi-IN' : 'hi-IN';
     }
     // Clear previous results when switching languages
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setOriginalText('');
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setTranslations(null);
   }, [sourceLang]);
 
@@ -86,6 +89,7 @@ export default function TranslatorPage() {
         setError(data.message || 'Translation failed');
       }
     } catch (err) {
+      console.error('Translation error:', err);
       setError('Could not connect to translation server.');
     } finally {
       setLoading(false);
@@ -136,42 +140,55 @@ export default function TranslatorPage() {
               >
                 Hindi
               </button>
+              <button 
+                className={`lang-btn ${sourceLang === 'kok' ? 'active' : ''}`}
+                onClick={() => setSourceLang('kok')}
+              >
+                Konkani
+              </button>
             </div>
           </div>
 
           {error && <div className="translator-error">{error}</div>}
 
-          <div className="mic-container">
-            <button 
-              className={`mic-button ${isListening ? 'listening' : ''}`}
-              onClick={toggleListening}
-              disabled={!!error && !error.includes('no-speech')}
-            >
-              {isListening ? '🎙️ Listening...' : '🎤 Tap to Speak'}
-            </button>
-            {isListening && <div className="listening-waves"><span></span><span></span><span></span></div>}
+          <div className="input-container">
+            <textarea
+              className="translator-input"
+              value={originalText}
+              onChange={(e) => setOriginalText(e.target.value)}
+              placeholder={`Type in ${sourceLang === 'en' ? 'English' : sourceLang === 'hi' ? 'Hindi' : 'Konkani'} or tap mic to speak...`}
+              rows="4"
+            />
+            <div className="input-actions">
+              <div className="mic-wrapper">
+                <button 
+                  className={`icon-btn mic-btn ${isListening ? 'listening' : ''}`}
+                  onClick={toggleListening}
+                  title={isListening ? 'Stop Listening' : 'Start Listening'}
+                  disabled={!!error && !error.includes('no-speech')}
+                >
+                  {isListening ? '🛑' : '🎤'}
+                </button>
+                {isListening && <div className="listening-waves"><span></span><span></span><span></span></div>}
+              </div>
+              <button 
+                className="action-btn translate-btn"
+                onClick={() => handleTranslate(originalText, sourceLang)}
+                disabled={!originalText.trim() || loading}
+              >
+                {loading ? 'Translating...' : 'Translate'}
+              </button>
+            </div>
           </div>
 
-          {originalText && (
+          {(loading || translations) && (
             <div className="translation-result animate-fade-up">
-              <div className="result-card original">
-                <span className="result-label">You said ({sourceLang === 'en' ? 'English' : 'Hindi'}):</span>
-                <p className="result-text">{originalText}</p>
-                <button 
-                  className="speak-btn"
-                  onClick={() => speakText(originalText, sourceLang === 'en' ? 'en-IN' : 'hi-IN')}
-                  title="Listen"
-                >
-                  🔊
-                </button>
-              </div>
-
               {loading && <div className="translating-indicator">Translating... 🔄</div>}
 
               {translations && (
                 <div className="translated-cards">
-                  {/* Show English translation if source was Hindi */}
-                  {sourceLang === 'hi' && translations.english && (
+                  {/* Show English translation if source was not English */}
+                  {sourceLang !== 'en' && translations.english && (
                     <div className="result-card translated">
                       <span className="result-label">English:</span>
                       <p className="result-text">{translations.english}</p>
@@ -185,8 +202,8 @@ export default function TranslatorPage() {
                     </div>
                   )}
 
-                  {/* Show Hindi translation if source was English */}
-                  {sourceLang === 'en' && translations.hindi && (
+                  {/* Show Hindi translation if source was not Hindi */}
+                  {sourceLang !== 'hi' && translations.hindi && (
                     <div className="result-card translated">
                       <span className="result-label">Hindi:</span>
                       <p className="result-text">{translations.hindi}</p>
@@ -200,8 +217,8 @@ export default function TranslatorPage() {
                     </div>
                   )}
 
-                  {/* Always show Konkani */}
-                  {translations.konkani && (
+                  {/* Show Konkani translation if source was not Konkani */}
+                  {sourceLang !== 'kok' && translations.konkani && (
                     <div className="result-card translated konkani-card">
                       <span className="result-label">Konkani (Local Language):</span>
                       <p className="result-text">{translations.konkani}</p>
