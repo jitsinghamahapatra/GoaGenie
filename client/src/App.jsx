@@ -6,6 +6,7 @@ import PlannerPage from './pages/PlannerPage';
 import SpotsPage from './pages/SpotsPage';
 import AuthPage from './pages/AuthPage';
 import TripsPage from './pages/TripsPage';
+import TranslatorPage from './pages/TranslatorPage';
 import Chatbot from './components/Chatbot';
 import './index.css';
 import './App.css';
@@ -21,6 +22,7 @@ function App() {
           <Route path="/spots" element={<SpotsPage />} />
           <Route path="/login" element={<AuthPage />} />
           <Route path="/trips" element={<TripsPage />} />
+          <Route path="/translator" element={<TranslatorPage />} />
         </Routes>
         <Chatbot />
       </BrowserRouter>

@@ -61,6 +61,7 @@
 
 @keyframes move-forever {
   0% { transform: translate3d(-90px, 0, 0); }
+  50% { transform: translate3d(0px, -5px, 0); }
   100% { transform: translate3d(85px, 0, 0); }
 }
 

@@ -22,6 +22,7 @@ export default function Navbar() {
     { to: '/', label: 'Home' },
     { to: '/planner', label: '✨ Plan My Trip' },
     { to: '/spots', label: 'Explore Spots' },
+    { to: '/translator', label: '🗣️ Translator' },
   ];
 
   if (user) {

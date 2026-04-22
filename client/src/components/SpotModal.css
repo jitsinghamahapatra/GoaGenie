@@ -1,0 +1,112 @@
+.spot-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.spot-modal-content {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+
+.spot-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 32px;
+  height: 32px;
+  background: var(--bg-accent);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+  z-index: 10;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.spot-modal-close:hover {
+  background: var(--error);
+  color: white;
+}
+
+.spot-modal-header {
+  padding: 1.5rem 1.5rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.spot-modal-header h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.spot-modal-header .spot-area {
+  color: var(--ocean);
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+}
+
+.spot-modal-map {
+  width: 100%;
+  height: 350px;
+  background: var(--bg-accent);
+  position: relative;
+}
+
+/* Override MapContainer height for modal */
+.spot-modal-map > div {
+  height: 100% !important;
+  width: 100% !important;
+  border-radius: 0 !important;
+}
+
+.spot-modal-footer {
+  padding: 1.5rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.distance-info p {
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+.distance-info strong {
+  color: var(--text-primary);
+  font-size: 1.2rem;
+}
+
+@media (max-width: 480px) {
+  .spot-modal-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .spot-modal-footer .btn {
+    width: 100%;
+  }
+}

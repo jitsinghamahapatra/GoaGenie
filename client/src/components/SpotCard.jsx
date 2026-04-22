@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import SpotModal from './SpotModal';
 import './SpotCard.css';
 
 const CATEGORY_EMOJI = {
@@ -30,10 +32,12 @@ function Stars({ rating }) {
 }
 
 export default function SpotCard({ spot }) {
+  const [showModal, setShowModal] = useState(false);
   const emoji = CATEGORY_EMOJI[spot.category] || '📍';
   const areaColor = AREA_COLORS[spot.area] || 'var(--teal)';
 
   return (
+    <>
     <article
       className={`spot-card glass-card spot-card--${spot.category}`}
       id={`spot-card-${spot.id}`}
@@ -68,14 +72,14 @@ export default function SpotCard({ spot }) {
           </div>
           <button 
             className="btn btn-sm btn-secondary spot-map-btn"
-            onClick={() => {
-              window.dispatchEvent(new CustomEvent('focusSpot', { detail: spot }));
-            }}
+            onClick={() => setShowModal(true)}
           >
             Track Location 🗺️
           </button>
         </div>
       </div>
     </article>
+    {showModal && <SpotModal spot={spot} onClose={() => setShowModal(false)} />}
+    </>
   );
 }

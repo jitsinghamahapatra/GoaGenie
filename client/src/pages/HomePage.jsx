@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { ref, onValue } from 'firebase/database';
+import { db } from '../firebase';
 import WeatherWidget from '../components/WeatherWidget';
 import SpotCard from '../components/SpotCard';
 import './HomePage.css';
@@ -19,11 +21,12 @@ export default function HomePage() {
         }
       });
 
-    fetch(`${API_URL}/api/analytics/visitors`)
-      .then(r => r.json())
-      .then(data => {
-        if (data.success) setVisitorCount(data.count);
-      });
+    const visitorRef = ref(db, 'stats/userCount');
+    const unsubscribe = onValue(visitorRef, (snapshot) => {
+      setVisitorCount(snapshot.val() || 0);
+    });
+
+    return () => unsubscribe();
   }, []);
 
   return (
@@ -40,9 +43,9 @@ export default function HomePage() {
                 <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
               </defs>
               <g className="parallax">
-                <use xlinkHref="#gentle-wave" x="48" y="0" fill="rgba(14, 165, 233, 0.4)" />
-                <use xlinkHref="#gentle-wave" x="48" y="3" fill="rgba(14, 165, 233, 0.2)" />
-                <use xlinkHref="#gentle-wave" x="48" y="5" fill="rgba(14, 165, 233, 0.1)" />
+                <use xlinkHref="#gentle-wave" x="48" y="0" fill="rgba(14, 165, 233, 0.7)" />
+                <use xlinkHref="#gentle-wave" x="48" y="3" fill="rgba(14, 165, 233, 0.5)" />
+                <use xlinkHref="#gentle-wave" x="48" y="5" fill="rgba(14, 165, 233, 0.3)" />
                 <use xlinkHref="#gentle-wave" x="48" y="7" fill="var(--bg-primary)" />
               </g>
             </svg>
@@ -90,7 +93,7 @@ export default function HomePage() {
             <p className="section-subtitle">Simplified travel planning for the modern explorer.</p>
           </header>
 
-          <div className="grid-3 features-grid">
+          <div className="grid-4 features-grid">
             <div className="feature-card card">
               <div className="feature-icon">🤖</div>
               <h3>AI Itineraries</h3>
@@ -105,6 +108,11 @@ export default function HomePage() {
               <div className="feature-icon">📍</div>
               <h3>Smart Routes</h3>
               <p>Get directions from your location to any spot in your itinerary.</p>
+            </div>
+            <div className="feature-card card">
+              <div className="feature-icon">🗣️</div>
+              <h3>Local Translator</h3>
+              <p>Speak in English or Hindi and translate instantly to local Konkani.</p>
             </div>
           </div>
         </div>

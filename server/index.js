@@ -7,6 +7,7 @@ const weatherRoute = require('./routes/weather');
 const spotsRoute = require('./routes/spots');
 const chatRoute = require('./routes/chat');
 const analyticsRoute = require('./routes/analytics');
+const translateRoute = require('./routes/translate');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -28,6 +29,7 @@ app.use('/api/weather', weatherRoute);
 app.use('/api/spots', spotsRoute);
 app.use('/api/chat', chatRoute);
 app.use('/api/analytics', analyticsRoute);
+app.use('/api/translate', translateRoute);
 
 // Health check
 app.get('/api/health', (req, res) => {

@@ -6,9 +6,11 @@ import {
   signOut,
   GoogleAuthProvider,
   signInWithPopup,
-  updateProfile
+  updateProfile,
+  getAdditionalUserInfo
 } from 'firebase/auth';
-import { auth } from './firebase';
+import { ref, runTransaction } from 'firebase/database';
+import { auth, db } from './firebase';
 
 const AuthContext = createContext();
 
@@ -29,6 +31,11 @@ export function AuthProvider({ children }) {
     if (displayName) {
       await updateProfile(res.user, { displayName });
     }
+    
+    // Increment total user count
+    const countRef = ref(db, 'stats/userCount');
+    await runTransaction(countRef, (current) => (current || 0) + 1);
+    
     return res;
   };
 
@@ -40,9 +47,17 @@ export function AuthProvider({ children }) {
     return signOut(auth);
   };
 
-  const googleSignIn = () => {
+  const googleSignIn = async () => {
     const provider = new GoogleAuthProvider();
-    return signInWithPopup(auth, provider);
+    const res = await signInWithPopup(auth, provider);
+    
+    const details = getAdditionalUserInfo(res);
+    if (details && details.isNewUser) {
+      const countRef = ref(db, 'stats/userCount');
+      await runTransaction(countRef, (current) => (current || 0) + 1);
+    }
+    
+    return res;
   };
 
   const value = {
